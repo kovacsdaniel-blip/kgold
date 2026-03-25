@@ -5,22 +5,895 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>k.gold</title>
   <style>
+    :root {
+      --bg: #000000;
+      --panel: rgba(255,255,255,0.04);
+      --panel-strong: rgba(255,255,255,0.08);
+      --border: rgba(255,255,255,0.10);
+      --text: #ffffff;
+      --muted: rgba(255,255,255,0.65);
+      --muted-2: rgba(255,255,255,0.45);
+      --white: #ffffff;
+      --black: #000000;
+      --max: 1200px;
+      --radius: 28px;
+      --radius-sm: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       margin: 0;
-      background: #000;
-      color: #fff;
-      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font: inherit;
+      cursor: pointer;
+      border: 0;
+      background: none;
+      color: inherit;
+    }
+
+    .container {
+      width: min(var(--max), calc(100% - 48px));
+      margin: 0 auto;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(0,0,0,0.86);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 16px 0;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .brand {
       display: flex;
       align-items: center;
-      justify-content: center;
-      height: 100vh;
+      gap: 12px;
+      text-align: left;
     }
-    h1 {
-      font-size: 48px;
+
+    .brand-box {
+      width: 42px;
+      height: 42px;
+      border-radius: 16px;
+      background: #fff;
+      color: #000;
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+      font-weight: 900;
+    }
+
+    .brand-title {
+      font-size: 28px;
+      font-weight: 900;
+      line-height: 1;
+      margin: 0;
+    }
+
+    .brand-sub {
+      margin: 4px 0 0;
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted-2);
+    }
+
+    .nav-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .nav-btn,
+    .cta-btn,
+    .outline-btn {
+      border-radius: 999px;
+      padding: 12px 18px;
+      transition: 0.25s ease;
+    }
+
+    .nav-btn {
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid transparent;
+    }
+
+    .nav-btn:hover {
+      color: #fff;
+    }
+
+    .nav-btn.active {
+      background: #fff;
+      color: #000;
+    }
+
+    .cta-btn {
+      background: #fff;
+      color: #000;
+      font-weight: 700;
+    }
+
+    .cta-btn:hover,
+    .outline-btn:hover,
+    .nav-btn:hover,
+    .card:hover {
+      transform: translateY(-2px);
+    }
+
+    .outline-btn {
+      border: 1px solid var(--border);
+      color: #fff;
+      font-weight: 700;
+      background: transparent;
+    }
+
+    .page {
+      display: none;
+      animation: fadeIn 0.45s ease;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 72px 0 84px;
+      background:
+        radial-gradient(circle at top right, rgba(255,255,255,0.14), transparent 28%),
+        radial-gradient(circle at bottom left, rgba(255,255,255,0.09), transparent 24%);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 56px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      margin: 0 0 20px;
+      color: var(--muted-2);
+      text-transform: uppercase;
+      letter-spacing: 0.35em;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    h1, h2, h3, p {
+      margin-top: 0;
+    }
+
+    .hero h1 {
+      font-size: clamp(38px, 6vw, 72px);
+      line-height: 1.02;
+      margin-bottom: 0;
+      font-weight: 900;
+    }
+
+    .hero-text {
+      margin-top: 34px;
+      font-size: 17px;
+      line-height: 1.9;
+      color: var(--muted);
+      max-width: 680px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 38px;
+    }
+
+    .hero-media-shell {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.05);
+      padding: 16px;
+      border-radius: 32px;
+      box-shadow: 0 30px 70px rgba(0,0,0,0.45);
+    }
+
+    .hero-media-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .video-card {
+      overflow: hidden;
+      border-radius: 28px;
+      border: 1px solid var(--border);
+      min-height: 360px;
+      padding: 8px;
+      background: linear-gradient(to bottom, #2a2a2a, #000);
+    }
+
+    .video-card.light {
+      background: #fff;
+    }
+
+    .video-card.rotate-left {
+      transform: rotate(-8deg);
+    }
+
+    .video-card.rotate-right {
+      transform: rotate(8deg);
+      margin-top: 34px;
+    }
+
+    .video-inner {
+      overflow: hidden;
+      border-radius: 22px;
+      height: 100%;
+      background: #000;
+    }
+
+    .video-inner video {
+      width: 100%;
+      height: 100%;
+      min-height: 344px;
+      object-fit: cover;
+      display: block;
+      background: #000;
+    }
+
+    .section-head {
+      padding: 72px 0 10px;
+      border-bottom: 1px solid var(--border);
+      background: #090909;
+    }
+
+    .section-head p:first-child {
+      margin-bottom: 18px;
+      color: var(--muted-2);
+      text-transform: uppercase;
+      letter-spacing: 0.3em;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .section-head h1 {
+      font-size: clamp(34px, 5vw, 58px);
+      font-weight: 900;
+      line-height: 1.05;
+      margin-bottom: 0;
+    }
+
+    .section-head .lead {
+      margin-top: 24px;
+      max-width: 760px;
+      color: var(--muted);
+      line-height: 1.85;
+      font-size: 17px;
+    }
+
+    .section {
+      padding: 70px 0;
+    }
+
+    .section.dark {
+      background: #090909;
+      border-top: 1px solid var(--border);
+    }
+
+    .cards-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .cards-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      transition: 0.25s ease;
+    }
+
+    .icon-wrap {
+      width: 52px;
+      height: 52px;
+      border-radius: 18px;
+      background: #fff;
+      color: #000;
+      display: grid;
+      place-items: center;
+    }
+
+    .card h3 {
+      margin-top: 22px;
+      font-size: 24px;
+      line-height: 1.2;
+      font-weight: 800;
+    }
+
+    .card p {
+      margin-top: 16px;
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 16px;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 36px;
+      align-items: center;
+    }
+
+    .about-text h2 {
+      font-size: clamp(28px, 4vw, 46px);
+      line-height: 1.1;
+      font-weight: 900;
+      margin-bottom: 0;
+    }
+
+    .about-text p {
+      margin-top: 22px;
+      color: var(--muted);
+      line-height: 1.9;
+      font-size: 17px;
+    }
+
+    .benefit-box {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 30px;
+    }
+
+    .benefit-item {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      color: rgba(255,255,255,0.82);
+      line-height: 1.7;
+    }
+
+    .benefit-item + .benefit-item {
+      margin-top: 18px;
+    }
+
+    .workflow-shell {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 34px;
+    }
+
+    .workflow-grid {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 26px;
+      align-items: start;
+    }
+
+    .workflow-side p:first-child {
+      color: var(--muted-2);
+      font-size: 12px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+
+    .workflow-side h3 {
+      font-size: 32px;
+      margin-bottom: 0;
+      font-weight: 900;
+    }
+
+    .step {
+      background: rgba(0,0,0,0.35);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 20px;
+    }
+
+    .step + .step {
+      margin-top: 14px;
+    }
+
+    .step strong {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    .step p {
+      color: var(--muted);
+      line-height: 1.8;
+      margin: 0;
+    }
+
+    .contact-head {
+      text-align: center;
+    }
+
+    .contact-head h1 {
+      font-size: clamp(34px, 5vw, 58px);
+      font-weight: 900;
+      margin-bottom: 0;
+    }
+
+    .contact-head p {
+      color: var(--muted);
+      line-height: 1.85;
+      max-width: 760px;
+      margin: 24px auto 0;
+      font-size: 17px;
+    }
+
+    .contact-grid {
+      margin-top: 34px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .contact-card {
+      border-radius: 24px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 24px;
+      transition: 0.25s ease;
+    }
+
+    .contact-card:hover {
+      transform: translateY(-2px);
+      background: rgba(255,255,255,0.07);
+    }
+
+    .contact-label {
+      margin-top: 16px;
+      color: var(--muted-2);
+      text-transform: uppercase;
+      letter-spacing: 0.25em;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .contact-value {
+      margin-top: 10px;
+      font-size: 18px;
+      font-weight: 700;
+      word-break: break-word;
+    }
+
+    .references-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px;
+    }
+
+    .reference-card {
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--panel);
+      padding: 16px;
+      box-shadow: 0 30px 70px rgba(0,0,0,0.35);
+    }
+
+    .reference-video-wrap {
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: #000;
+    }
+
+    .reference-video-wrap video {
+      display: block;
+      width: 100%;
+      height: 580px;
+      object-fit: cover;
+      background: #000;
+    }
+
+    .site-footer {
+      border-top: 1px solid var(--border);
+      background: #090909;
+      padding: 24px 0;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      color: rgba(255,255,255,0.35);
+      font-size: 12px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    svg {
+      width: 22px;
+      height: 22px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.9;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .about-grid,
+      .workflow-grid,
+      .cards-3,
+      .cards-2,
+      .contact-grid,
+      .references-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding-top: 50px;
+      }
+
+      .hero-media-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .video-card.rotate-left,
+      .video-card.rotate-right {
+        transform: none;
+        margin-top: 0;
+      }
+
+      .reference-video-wrap video {
+        height: 420px;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        width: min(var(--max), calc(100% - 28px));
+      }
+
+      .header-top {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .hero-actions {
+        flex-direction: column;
+      }
+
+      .cta-btn,
+      .outline-btn {
+        width: 100%;
+        text-align: center;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>k.gold</h1>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="header-top">
+        <button class="brand" data-page-btn="home">
+          <div class="brand-box">k.</div>
+          <div>
+            <p class="brand-title">k.gold</p>
+            <p class="brand-sub">videóvágás</p>
+          </div>
+        </button>
+
+        <button class="cta-btn" data-page-btn="contact">Írj nekem</button>
+      </div>
+
+      <nav class="nav-row">
+        <button class="nav-btn active" data-page-btn="home">Főoldal</button>
+        <button class="nav-btn" data-page-btn="references">Referenciák</button>
+        <button class="nav-btn" data-page-btn="services">Szolgáltatások</button>
+        <button class="nav-btn" data-page-btn="about">Miért én</button>
+        <button class="nav-btn" data-page-btn="contact">Kapcsolat</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="page active" data-page="home">
+      <div class="hero">
+        <div class="container hero-grid">
+          <div>
+            <p class="eyebrow">Tiktok / Reels / Shorts videóvágás</p>
+            <h1>Vágás, ami megfogja a nézőt az első másodpercben.</h1>
+            <p class="hero-text">
+              Short-form és long-form videók professzionális vágása tartalomgyártóknak,
+              személyes márkáknak és vállalkozásoknak. A cél egyszerű: ütős tartalom,
+              erősebb figyelem, jobb megjelenés.
+            </p>
+
+            <div class="hero-actions">
+              <button class="cta-btn" data-page-btn="contact">Projektet indítok</button>
+              <button class="outline-btn" data-page-btn="references">Referenciák megnyitása</button>
+            </div>
+          </div>
+
+          <div class="hero-media-shell">
+            <div class="hero-media-grid">
+              <div class="video-card rotate-left">
+                <div class="video-inner">
+                  <video src="dangmuai1.mp4" autoplay muted loop playsinline controls preload="metadata"></video>
+                </div>
+              </div>
+
+              <div class="video-card light rotate-right">
+                <div class="video-inner">
+                  <video src="freshline_koklerklimas.mp4" autoplay muted loop playsinline controls preload="metadata"></video>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" data-page="references">
+      <div class="section-head">
+        <div class="container">
+          <p>Referenciák</p>
+          <h1>Válogatott munkák és videós referenciák</h1>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="container references-grid">
+          <div class="reference-card">
+            <div class="reference-video-wrap">
+              <video src="dangmuai1.mp4" controls muted loop playsinline preload="metadata"></video>
+            </div>
+          </div>
+
+          <div class="reference-card">
+            <div class="reference-video-wrap">
+              <video src="freshline_koklerklimas.mp4" controls muted loop playsinline preload="metadata"></video>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" data-page="services">
+      <div class="section-head">
+        <div class="container">
+          <p>Szolgáltatások</p>
+          <h1>Tartalomvágás, ami a platformhoz van igazítva</h1>
+          <p class="lead">
+            Short-form, long-form és automatizált videós workflow egy helyen, gyors és prémium kivitelezéssel.
+          </p>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="container cards-3">
+          <div class="card">
+            <div class="icon-wrap">
+              <svg viewBox="0 0 24 24"><polygon points="8 5 19 12 8 19 8 5" fill="currentColor" stroke="none"></polygon></svg>
+            </div>
+            <h3>TikTok / Reels / Shorts</h3>
+            <p>Short-form videók vágása erős hookkal, pörgős ritmussal és figyelemmegtartó szerkezettel.</p>
+          </div>
+
+          <div class="card">
+            <div class="icon-wrap">
+              <svg viewBox="0 0 24 24">
+                <circle cx="6" cy="6" r="2.5"></circle>
+                <circle cx="6" cy="18" r="2.5"></circle>
+                <path d="M8.2 7.8L19 19"></path>
+                <path d="M8.2 16.2L19 5"></path>
+              </svg>
+            </div>
+            <h3>Long-form vágás</h3>
+            <p>YouTube-videók, interjúk, podcastok és edukációs tartalmak letisztult, profi utómunkával.</p>
+          </div>
+
+          <div class="card">
+            <div class="icon-wrap">
+              <svg viewBox="0 0 24 24"><path d="M12 3l1.7 5.3L19 10l-5.3 1.7L12 17l-1.7-5.3L5 10l5.3-1.7L12 3z" fill="currentColor" stroke="none"></path></svg>
+            </div>
+            <h3>AI automatizált tartalmak</h3>
+            <p>Feliratozás, gyors workflow, ismétlődő folyamatok gyorsítása és tartalomgyártás optimalizálása.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" data-page="about">
+      <div class="section-head">
+        <div class="container">
+          <p>Miért én</p>
+          <h1>Letisztult vizuál, erős ritmus, gyors kivitelezés.</h1>
+          <p class="lead">
+            Olyan videókat készítek, amelyek nemcsak jól néznek ki, hanem jobban meg is tartják a figyelmet.
+          </p>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="container about-grid">
+          <div class="about-text">
+            <h2>A tartalmad profibbnak hat, és tovább nézik végig.</h2>
+            <p>
+              A videóidat úgy vágom meg, hogy egyszerre legyenek igényesek, modernebbek és platform-kompatibilisek.
+              A cél az, hogy a tartalmad karakteresebb legyen és jobb első benyomást adjon.
+            </p>
+          </div>
+
+          <div class="benefit-box">
+            <div class="benefit-item">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M8 12.5l2.5 2.5L16 9.5"></path></svg>
+              <div>Gyors és modern videóvágás</div>
+            </div>
+            <div class="benefit-item">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M8 12.5l2.5 2.5L16 9.5"></path></svg>
+              <div>Short-form fókusz magasabb retentionre</div>
+            </div>
+            <div class="benefit-item">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M8 12.5l2.5 2.5L16 9.5"></path></svg>
+              <div>Feliratok és dinamikus vizuális ritmus</div>
+            </div>
+            <div class="benefit-item">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M8 12.5l2.5 2.5L16 9.5"></path></svg>
+              <div>Tartalomgyártóknak és márkáknak egyaránt</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section dark">
+        <div class="container">
+          <div class="workflow-shell">
+            <div class="workflow-grid">
+              <div class="workflow-side">
+                <p>Workflow</p>
+                <h3>Egyszerű, gyors együttműködés</h3>
+              </div>
+
+              <div>
+                <div class="step">
+                  <strong>1. Brief és anyagküldés</strong>
+                  <p>Megbeszéljük a stílust, a célt és a platformot, ahová a videó készül.</p>
+                </div>
+                <div class="step">
+                  <strong>2. Vágás és finomhangolás</strong>
+                  <p>Tempó, hook, képi dinamika, feliratok és ritmus a nézők figyelmére optimalizálva.</p>
+                </div>
+                <div class="step">
+                  <strong>3. Kész anyag átadás</strong>
+                  <p>Export a kívánt platformra szabva, gyors és egyszerű visszajelzési körrel.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" data-page="contact">
+      <div class="section-head">
+        <div class="container contact-head">
+          <p>Kapcsolat</p>
+          <h1>Dolgozzunk együtt a következő videódon.</h1>
+          <p>
+            Ha short-form, reels, TikTok, YouTube vagy AI-alapú tartalomvágás kell,
+            írj és beszéljük át a projektedet.
+          </p>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="container contact-grid">
+          <a class="contact-card" href="https://instagram.com/danielk_gold" target="_blank" rel="noreferrer">
+            <svg viewBox="0 0 24 24"><path d="M12 4v16"></path><path d="M4 12h16"></path></svg>
+            <div class="contact-label">Instagram</div>
+            <div class="contact-value">@danielk_gold</div>
+          </a>
+
+          <a class="contact-card" href="mailto:dani031208@gmail.com">
+            <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M4 7l8 6 8-6"></path></svg>
+            <div class="contact-label">Email</div>
+            <div class="contact-value">dani031208@gmail.com</div>
+          </a>
+
+          <a class="contact-card" href="tel:+36300000000">
+            <svg viewBox="0 0 24 24"><path d="M7.5 4.5h3l1.2 3.1-1.8 1.8a14.8 14.8 0 0 0 4.7 4.7l1.8-1.8 3.1 1.2v3a1.5 1.5 0 0 1-1.6 1.5C9.6 18 6 14.4 6 10.1A1.5 1.5 0 0 1 7.5 8.5v-4z"></path></svg>
+            <div class="contact-label">Elérhetőség</div>
+            <div class="contact-value">Telefonszám helye</div>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>© <span id="year"></span> k.gold — videóvágás</div>
+      <div>HTML verzió — Vercelre kész</div>
+    </div>
+  </footer>
+
+  <script>
+    const buttons = document.querySelectorAll("[data-page-btn]");
+    const pages = document.querySelectorAll(".page");
+    const yearEl = document.getElementById("year");
+
+    yearEl.textContent = new Date().getFullYear();
+
+    function setPage(pageName) {
+      pages.forEach((page) => {
+        page.classList.toggle("active", page.dataset.page === pageName);
+      });
+
+      buttons.forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.pageBtn === pageName && btn.classList.contains("nav-btn"));
+      });
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => setPage(btn.dataset.pageBtn));
+    });
+  </script>
 </body>
 </html>
